@@ -4,6 +4,7 @@ using MyoSharp.Communication;
 using MyoSharp.Device;
 using MyoSharp.ConsoleSample.Internal;
 using MyoSharp.Exceptions;
+using MyoSharp.Poses;
 
 namespace MyoSharp.ConsoleSample
 {
@@ -31,9 +32,12 @@ namespace MyoSharp.ConsoleSample
         {
 
             vehicle = new Vehicle("localhost");
-            while (vehicle.connectState == Vehicle.ConnectionState.AttemptingConnect)
+            while (!vehicle.Connected)
             {
             }
+
+            vehicle.SetGear(GearDirection.GEAR_DIRECTION_BACKWARD);
+            vehicle.Update();
 
             // create a hub that will manage Myo devices for us
             using (var channel = Channel.Create(
@@ -70,13 +74,13 @@ namespace MyoSharp.ConsoleSample
         #endregion
 
         #region Event Handlers
-        private static void Myo_OrientationDataAcquiredRight(object sender, OrientationDataEventArgs e)
+        private static void Myo_OrientationDataAcquired(object sender, OrientationDataEventArgs e)
         {
             const float PI = (float)System.Math.PI;
 
             var pitchDegree = e.Pitch * 180 / PI;
 
-            Console.WriteLine($"Pitch percentage={pitchDegree}");
+            //Console.WriteLine($"Pitch percentage={pitchDegree}");
 
             if (pitchDegree > 0)
             {
@@ -86,7 +90,6 @@ namespace MyoSharp.ConsoleSample
             }
             else if (pitchDegree < 0)
             {
-                Console.WriteLine("lower 0");
                 vehicle.SetBrake((float) (((70f / 100f) * System.Math.Abs(pitchDegree)) / 100f));
                 vehicle.SetThrottle(0f);
             }
@@ -100,7 +103,7 @@ namespace MyoSharp.ConsoleSample
             var rollDegree = e.Roll * 180f / PI;
             var rollPercentage = (float)((65f / 100f * rollDegree)) / 100f;
 
-            Console.WriteLine($"Roll percentage={rollDegree}");
+            //Console.WriteLine($"Roll percentage={rollDegree}");
 
             vehicle.SetSteeringAngle(rollPercentage * -1f);
             vehicle.Update();
@@ -108,14 +111,62 @@ namespace MyoSharp.ConsoleSample
 
         private static void Myo_PoseChanged(object sender, PoseEventArgs e)
         {
-            Console.WriteLine("{0} arm Myo detected {1} pose!", e.Myo.Arm, e.Myo.Pose);
+            if (e.Myo.Pose == Pose.WaveIn)
+            {
+                switch (vehicle.Status.GearDirection)
+                {
+                    case GearDirection.GEAR_DIRECTION_NEUTRAL:
+                    case GearDirection.GEAR_DIRECTION_UNKNOWN:
+                        vehicle.SetGear(GearDirection.GEAR_DIRECTION_FORWARD);
+                        vehicle.Update();
+                        break;
+                    case GearDirection.GEAR_DIRECTION_BACKWARD:
+                        vehicle.SetGear(GearDirection.GEAR_DIRECTION_NEUTRAL);
+                        vehicle.Update();
+                        break;
+                }
+
+                Console.WriteLine(vehicle.Status.GearDirection);
+            }
+
+            if (e.Myo.Pose == Pose.WaveOut)
+            {
+                switch (vehicle.Status.GearDirection)
+                {
+                    case GearDirection.GEAR_DIRECTION_NEUTRAL:
+                    case GearDirection.GEAR_DIRECTION_UNKNOWN:
+                        vehicle.SetGear(GearDirection.GEAR_DIRECTION_BACKWARD);
+                        vehicle.Update();
+                        break;
+                    case GearDirection.GEAR_DIRECTION_FORWARD:
+                        vehicle.SetGear(GearDirection.GEAR_DIRECTION_NEUTRAL);
+                        vehicle.Update();
+                        break;
+                }
+
+                Console.WriteLine(vehicle.Status.GearDirection);
+            }
+
+            if (e.Myo.Pose == Pose.Fist && e.Myo.Arm == Arm.Left)
+            {
+                Console.WriteLine("turn left");
+                vehicle.SetTurnSignal(TurnSignal.TURN_SIGNAL_LEFT);
+                vehicle.Update();
+            }
+
+            if (e.Myo.Pose == Pose.Fist && e.Myo.Arm == Arm.Right)
+            {
+                Console.Write("turn right");
+                vehicle.SetTurnSignal(TurnSignal.TURN_SIGNAL_LEFT);
+                vehicle.Update();
+            }
         }
 
         private static void Myo_Unlocked(object sender, MyoEventArgs e)
         {
             if (e.Myo.Arm == Arm.Right)
             {
-                e.Myo.OrientationDataAcquired += Myo_OrientationDataAcquiredRight;
+                e.Myo.OrientationDataAcquired += Myo_OrientationDataAcquired;
             }
             if (e.Myo.Arm == Arm.Left)
             {
@@ -125,7 +176,7 @@ namespace MyoSharp.ConsoleSample
 
         private static void Myo_Locked(object sender, MyoEventArgs e)
         {
-            Console.WriteLine("{0} arm Myo has locked!", e.Myo.Arm);
+            e.Myo.Unlock(UnlockType.Hold);
         }
         #endregion
     }

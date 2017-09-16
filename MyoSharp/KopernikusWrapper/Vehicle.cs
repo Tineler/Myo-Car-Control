@@ -1,4 +1,9 @@
-﻿using System;
+﻿/*
+ * (c) 2017 Kopernikus Automotive UG
+ *
+ */
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
@@ -24,7 +29,7 @@ namespace KopernikusWrapper
             Command
         }
 
-        public ConnectionState connectState = ConnectionState.NotConnected;
+        ConnectionState connectState = ConnectionState.NotConnected;
         int port = 10001;
         string address;
         Socket clientSocket;
@@ -42,7 +47,7 @@ namespace KopernikusWrapper
         VehicleType vehicleType;
         public VehicleType VehicleType
         {
-            get
+            get 
             {
                 return vehicleType;
             }
@@ -63,19 +68,19 @@ namespace KopernikusWrapper
             vehicleStatus = new VehicleStatus();
             StartConnect();
         }
-
+	
 
         public bool Available
         {
-            get
+            get 
             {
                 return connectState != ConnectionState.Unavailable;
             }
         }
-
+           
         public bool Connected
         {
-            get
+            get 
             {
                 return connectState == ConnectionState.Connected;
             }
@@ -87,6 +92,8 @@ namespace KopernikusWrapper
         {
             gearDirectionRequest = g;
             gearDirectionRequested = true;
+            Status.GearDirection = g;
+            request = RequestCommand.Command;
         }
 
         bool steeringAngleRequested = false;
@@ -123,6 +130,7 @@ namespace KopernikusWrapper
             turnSignalRequest = t;
             turnSinalRequested = true;
             request = RequestCommand.Command;
+
         }
 
         public Sensor Sensor(SensorType type)
@@ -133,10 +141,9 @@ namespace KopernikusWrapper
             }
             return null;
         }
-
+       
         public void Update()
         {
-            Console.WriteLine(request);
             if (request != RequestCommand.Undefined)
             {
                 SendRequest(request);
@@ -158,7 +165,6 @@ namespace KopernikusWrapper
             {
                 System.IAsyncResult result = clientSocket.BeginConnect(address, port, EndConnect, null);
                 bool connectSuccess = result.AsyncWaitHandle.WaitOne(System.TimeSpan.FromSeconds(10));
-
                 if (!connectSuccess)
                 {
                     clientSocket.Close();
@@ -183,36 +189,35 @@ namespace KopernikusWrapper
 
         void SendRequest(RequestCommand command)
         {
-            Console.WriteLine("SendRequest");
             writeBuffer[0] = (byte)command;
             int requestLength = 1;
             string requestCommands = "";
             if (gearDirectionRequested)
             {
-                requestCommands += "g:" + (int)gearDirectionRequest + ";";
+                requestCommands += "g:"+(int)gearDirectionRequest+";";
                 gearDirectionRequested = false;
             }
             if (steeringAngleRequested)
             {
-                requestCommands += "s:" + steeringAngleRequest + ";";
+                requestCommands += "s:"+steeringAngleRequest+";";
                 steeringAngleRequested = false;
             }
             if (throttleRequested)
             {
-                requestCommands += "t:" + throttleRequest + ";";
+                requestCommands += "t:"+throttleRequest+";";
                 throttleRequested = false;
             }
             if (brakeRequested)
             {
-                requestCommands += "b:" + brakeRequest + ";";
+                requestCommands += "b:"+brakeRequest+";";
                 brakeRequested = false;
             }
             if (turnSinalRequested)
             {
-                Console.WriteLine("turn signale");
-                requestCommands += "ts:" + (int)turnSignalRequest + ";";
+                requestCommands += "ts:"+(int)turnSignalRequest+";";
                 turnSinalRequested = false;
             }
+            Console.WriteLine(requestCommands);
             if (requestCommands.Length > 0)
             {
                 System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
@@ -222,7 +227,7 @@ namespace KopernikusWrapper
 
                 requestLength += b.Length;
             }
-
+                
             clientSocket.BeginSend(writeBuffer, 0, requestLength, SocketFlags.None, EndSend, writeBuffer);
             BeginReceiveData();
         }
@@ -250,7 +255,7 @@ namespace KopernikusWrapper
             }
             else
             {
-                receiveDataLength =
+                receiveDataLength = 
                     readHeader[0] +
                     (readHeader[1] << 8) +
                     (readHeader[2] << 16) +
@@ -293,12 +298,13 @@ namespace KopernikusWrapper
             }
 
             System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
-            string s = enc.GetString(readBuffer, 0, numBytesRecv);
+            string s = enc.GetString(readBuffer,0,numBytesRecv);
 
-            Console.WriteLine(s);
+            //UnityEngine.Debug.Log(s);
+
+            vehicleStatus = new VehicleStatus(s);
 
             request = RequestCommand.VehicleStatus;
         }
     }
-
 }

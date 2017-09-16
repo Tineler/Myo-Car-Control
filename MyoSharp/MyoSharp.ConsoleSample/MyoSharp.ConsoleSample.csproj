@@ -46,6 +46,7 @@
     <Compile Include="EmgStreamingExample.cs" />
     <Compile Include="HeldPoseExample.cs" />
     <Compile Include="Internal\ConsoleHelper.cs" />
+    <Compile Include="NoVehicle.cs" />
     <Compile Include="OrientationExample.cs" />
     <Compile Include="PoseSequenceExample.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
