@@ -3,12 +3,13 @@ using System.Configuration;
 using System.Threading;
 using KopernikusWrapper;
 using MyoSharp.Communication;
-using MyoSharp.Device;
+using MyoSharp.ConsoleSample;
 using MyoSharp.ConsoleSample.Internal;
+using MyoSharp.Device;
 using MyoSharp.Exceptions;
 using MyoSharp.Poses;
 
-namespace MyoSharp.ConsoleSample
+namespace MyoCar.MyoCar
 {
     /// <summary>
     /// Main class for building the bridge between the Myo Controls and the KopernikusWrapper.
@@ -276,7 +277,7 @@ namespace MyoSharp.ConsoleSample
 
             _logger.Debug($"Pitch percentage={pitchDegree}");
 
-            var absAcceleartion = (float)(70f / 100f * System.Math.Abs(pitchDegree)) / 100f;
+            var absAcceleartion = (float)(70f / 100f * Math.Abs(pitchDegree)) / 100f;
 
             if (pitchDegree > 0)
             {

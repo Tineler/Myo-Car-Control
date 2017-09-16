@@ -7,8 +7,8 @@
     <ProjectGuid>{27DA6BB8-8526-437E-9293-A877FC175653}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MyoSharp.ConsoleSample</RootNamespace>
-    <AssemblyName>MyoSharp.ConsoleSample</AssemblyName>
+    <RootNamespace>MyoCar.MyoCar</RootNamespace>
+    <AssemblyName>MyoCar</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -36,7 +36,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>MyoSharp.ConsoleSample.MyoCar</StartupObject>
+    <StartupObject>MyoCar.MyoCar.MyoCar</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
