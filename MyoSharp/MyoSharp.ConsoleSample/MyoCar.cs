@@ -10,23 +10,7 @@ using MyoSharp.Poses;
 namespace MyoSharp.ConsoleSample
 {
 
-    /// <summary>
-    /// This example will show you how to hook onto the orientation events on
-    /// the Myo and pull roll, pitch and yaw values from it. In this example the 
-    /// raw vectors from the orientation event args are converted to roll, pitch and yaw
-    /// on a scale from 0 to 9, depending on the position of the myo
-    /// </summary>
-    /// <remarks>
-    /// Not sure how to use this example?
-    /// - Open Visual Studio
-    /// - Go to the solution explorer
-    /// - Find the project that this file is contained within
-    /// - Right click on the project in the solution explorer, go to "properties"
-    /// - Go to the "Application" tab
-    /// - Under "Startup object" pick this example from the list
-    /// - Hit F5 and you should be good to go!
-    /// </remarks>
-    internal class OrientationExample
+    internal class MyoCar
     {
         private static Vehicle vehicle;
         #region Methods
@@ -39,12 +23,8 @@ namespace MyoSharp.ConsoleSample
             }
             System.Threading.TimerCallback TimerDelegate = new System.Threading.TimerCallback(TimerTask);
 
-            // Create a timer that calls a procedure every 2 seconds.
-            // Note: There is no Start method; the timer starts running as soon as 
-            // the instance is created.
             System.Threading.Timer TimerItem = new System.Threading.Timer(TimerDelegate, null, 20, 20);
             vehicle.SetGear(GearDirection.GEAR_DIRECTION_NEUTRAL);
-            //vehicle.Update();
 
             // create a hub that will manage Myo devices for us
             using (var channel = Channel.Create(
@@ -105,7 +85,6 @@ namespace MyoSharp.ConsoleSample
                 vehicle.SetBrake((float) (((70f / 100f) * System.Math.Abs(pitchDegree)) / 100f));
                 vehicle.SetThrottle(0f);
             }
-            //vehicle.Update();
         }
 
         private static void Myo_OrientationDataAcquiredLeft(object sender, OrientationDataEventArgs e)
@@ -118,7 +97,6 @@ namespace MyoSharp.ConsoleSample
             //Console.WriteLine($"Roll percentage={rollDegree}");
 
             vehicle.SetSteeringAngle(rollPercentage * -1f);
-            //vehicle.Update();
         }
 
         private static void Myo_PoseChanged(object sender, PoseEventArgs e)
@@ -130,11 +108,9 @@ namespace MyoSharp.ConsoleSample
                     case GearDirection.GEAR_DIRECTION_NEUTRAL:
                     case GearDirection.GEAR_DIRECTION_UNKNOWN:
                         vehicle.SetGear(GearDirection.GEAR_DIRECTION_FORWARD);
-                        //vehicle.Update();
                         break;
                     case GearDirection.GEAR_DIRECTION_BACKWARD:
                         vehicle.SetGear(GearDirection.GEAR_DIRECTION_NEUTRAL);
-                        //vehicle.Update();
                         break;
                 }
 
@@ -148,11 +124,9 @@ namespace MyoSharp.ConsoleSample
                     case GearDirection.GEAR_DIRECTION_NEUTRAL:
                     case GearDirection.GEAR_DIRECTION_UNKNOWN:
                         vehicle.SetGear(GearDirection.GEAR_DIRECTION_BACKWARD);
-                        //vehicle.Update();
                         break;
                     case GearDirection.GEAR_DIRECTION_FORWARD:
                         vehicle.SetGear(GearDirection.GEAR_DIRECTION_NEUTRAL);
-                        //vehicle.Update();
                         break;
                 }
 

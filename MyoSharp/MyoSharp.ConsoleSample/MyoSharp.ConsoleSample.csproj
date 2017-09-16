@@ -36,20 +36,16 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>MyoSharp.ConsoleSample.OrientationExample</StartupObject>
+    <StartupObject>MyoSharp.ConsoleSample.MyoCar</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicSetupExample.cs" />
-    <Compile Include="EmgStreamingExample.cs" />
-    <Compile Include="HeldPoseExample.cs" />
     <Compile Include="Internal\ConsoleHelper.cs" />
     <Compile Include="NoVehicle.cs" />
-    <Compile Include="OrientationExample.cs" />
-    <Compile Include="PoseSequenceExample.cs" />
+    <Compile Include="MyoCar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
