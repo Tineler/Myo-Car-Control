@@ -1,5 +1,5 @@
 ﻿using System;
-
+using KopernikusWrapper;
 using MyoSharp.Communication;
 using MyoSharp.Device;
 using MyoSharp.ConsoleSample.Internal;
@@ -25,9 +25,16 @@ namespace MyoSharp.ConsoleSample
     /// </remarks>
     internal class OrientationExample
     {
+        private static Vehicle vehicle;
         #region Methods
         private static void Main()
         {
+
+            vehicle = new Vehicle("localhost");
+            while (vehicle.connectState == Vehicle.ConnectionState.AttemptingConnect)
+            {
+            }
+
             // create a hub that will manage Myo devices for us
             using (var channel = Channel.Create(
                 ChannelDriver.Create(ChannelBridge.Create(),
@@ -38,6 +45,7 @@ namespace MyoSharp.ConsoleSample
                 hub.MyoConnected += (sender, e) =>
                 {
                     Console.WriteLine("Myo {0} has connected!", e.Myo.Handle);
+                    e.Myo.Unlock(UnlockType.Hold);
                     e.Myo.Vibrate(VibrationType.Short);
                     e.Myo.OrientationDataAcquired += Myo_OrientationDataAcquired;
                 };
@@ -68,10 +76,19 @@ namespace MyoSharp.ConsoleSample
             var pitch = (int)((e.Pitch + PI) / (PI * 2.0f) * 10);
             var yaw = (int)((e.Yaw + PI) / (PI * 2.0f) * 10);
 
-            Console.Clear();
-            Console.WriteLine(@"Roll: {0}", roll);
-            Console.WriteLine(@"Pitch: {0}", pitch);
-            Console.WriteLine(@"Yaw: {0}", yaw);
+            Console.WriteLine("rolle = " + e.Roll);
+
+            var rollDegree = e.Roll * 180 / PI;
+            float rollPercentage = (float) (180 / 100 * rollDegree);
+
+            vehicle.SetThrottle(0.2f);
+            vehicle.SetSteeringAngle(rollPercentage);
+            vehicle.Update();
+
+            //Console.Clear();
+            //Console.WriteLine(@"Roll: {0}", roll);
+            //Console.WriteLine(@"Pitch: {0}", pitch);
+            //Console.WriteLine(@"Yaw: {0}", yaw);
         }
         #endregion
     }
