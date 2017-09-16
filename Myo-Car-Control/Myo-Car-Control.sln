@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.8
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Myo-Car-Control", "Myo-Car-Control.csproj", "{3041E6A9-3F35-45FA-B099-3B9E2570669F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KopernikusWrapper", "..\KopernikusWrapper\KopernikusWrapper.csproj", "{549A6CAB-1DCE-4B28-9ACD-BC9D8910006A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3041E6A9-3F35-45FA-B099-3B9E2570669F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3041E6A9-3F35-45FA-B099-3B9E2570669F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3041E6A9-3F35-45FA-B099-3B9E2570669F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3041E6A9-3F35-45FA-B099-3B9E2570669F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{549A6CAB-1DCE-4B28-9ACD-BC9D8910006A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{549A6CAB-1DCE-4B28-9ACD-BC9D8910006A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{549A6CAB-1DCE-4B28-9ACD-BC9D8910006A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{549A6CAB-1DCE-4B28-9ACD-BC9D8910006A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {89592960-8B15-463C-B813-659BD37A34B4}
+	EndGlobalSection
+EndGlobal
