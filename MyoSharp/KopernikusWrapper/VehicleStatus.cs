@@ -138,7 +138,7 @@ namespace KopernikusWrapper
             {
                 return turnSignal;
             }
+            set { turnSignal = value; }
         }
-		
-	}
+    }
 }

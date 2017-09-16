@@ -130,8 +130,8 @@ namespace KopernikusWrapper
         {
             turnSignalRequest = t;
             turnSinalRequested = true;
+            Status.TurnSignal = t;
             request = RequestCommand.Command;
-
         }
 
         public Sensor Sensor(SensorType type)
@@ -218,7 +218,7 @@ namespace KopernikusWrapper
                 requestCommands += "ts:"+(int)turnSignalRequest+";";
                 turnSinalRequested = false;
             }
-            Console.WriteLine(requestCommands);
+
             if (requestCommands.Length > 0)
             {
                 System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();

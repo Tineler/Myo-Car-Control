@@ -161,16 +161,30 @@ namespace MyoSharp.ConsoleSample
 
             if (e.Myo.Pose == Pose.Fist && e.Myo.Arm == Arm.Left)
             {
-                Console.WriteLine("turn left");
-                vehicle.SetTurnSignal(TurnSignal.TURN_SIGNAL_LEFT);
-                //vehicle.Update();
+                if (vehicle.Status.TurnSignal == TurnSignal.TURN_SIGNAL_OFF)
+                {
+                    Console.WriteLine("turn left on");
+                    vehicle.SetTurnSignal(TurnSignal.TURN_SIGNAL_LEFT);
+                }
+                else
+                {
+                    Console.WriteLine("turn left off");
+                    vehicle.SetTurnSignal(TurnSignal.TURN_SIGNAL_OFF);
+                }
             }
 
             if (e.Myo.Pose == Pose.Fist && e.Myo.Arm == Arm.Right)
             {
-                Console.Write("turn right");
-                vehicle.SetTurnSignal(TurnSignal.TURN_SIGNAL_LEFT);
-                //vehicle.Update();
+                if (vehicle.Status.TurnSignal == TurnSignal.TURN_SIGNAL_OFF)
+                {
+                    Console.WriteLine("turn right on");
+                    vehicle.SetTurnSignal(TurnSignal.TURN_SIGNAL_RIGHT);
+                }
+                else
+                {
+                    Console.WriteLine("turn right off");
+                    vehicle.SetTurnSignal(TurnSignal.TURN_SIGNAL_OFF);
+                }
             }
         }
 
