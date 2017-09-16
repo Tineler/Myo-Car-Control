@@ -43,8 +43,9 @@
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Internal\ConsoleHelper.cs" />
-    <Compile Include="NoVehicle.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Internal\KeepAlive.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="MyoCar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
