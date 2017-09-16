@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using KopernikusWrapper;
 using MyoSharp.Communication;
 using MyoSharp.Device;
@@ -8,6 +9,7 @@ using MyoSharp.Poses;
 
 namespace MyoSharp.ConsoleSample
 {
+
     /// <summary>
     /// This example will show you how to hook onto the orientation events on
     /// the Myo and pull roll, pitch and yaw values from it. In this example the 
@@ -31,13 +33,18 @@ namespace MyoSharp.ConsoleSample
         private static void Main()
         {
 
-            vehicle = new Vehicle("localhost");
+            vehicle = new Vehicle(ConfigurationManager.AppSettings["remoteHost"]);
             while (!vehicle.Connected)
             {
             }
+            System.Threading.TimerCallback TimerDelegate = new System.Threading.TimerCallback(TimerTask);
 
-            vehicle.SetGear(GearDirection.GEAR_DIRECTION_BACKWARD);
-            vehicle.Update();
+            // Create a timer that calls a procedure every 2 seconds.
+            // Note: There is no Start method; the timer starts running as soon as 
+            // the instance is created.
+            System.Threading.Timer TimerItem = new System.Threading.Timer(TimerDelegate, null, 20, 20);
+            vehicle.SetGear(GearDirection.GEAR_DIRECTION_NEUTRAL);
+            //vehicle.Update();
 
             // create a hub that will manage Myo devices for us
             using (var channel = Channel.Create(
@@ -73,6 +80,11 @@ namespace MyoSharp.ConsoleSample
         }
         #endregion
 
+        private static void TimerTask(object StateObj)
+        {
+            vehicle.Update();
+        }
+
         #region Event Handlers
         private static void Myo_OrientationDataAcquired(object sender, OrientationDataEventArgs e)
         {
@@ -93,7 +105,7 @@ namespace MyoSharp.ConsoleSample
                 vehicle.SetBrake((float) (((70f / 100f) * System.Math.Abs(pitchDegree)) / 100f));
                 vehicle.SetThrottle(0f);
             }
-            vehicle.Update();
+            //vehicle.Update();
         }
 
         private static void Myo_OrientationDataAcquiredLeft(object sender, OrientationDataEventArgs e)
@@ -106,7 +118,7 @@ namespace MyoSharp.ConsoleSample
             //Console.WriteLine($"Roll percentage={rollDegree}");
 
             vehicle.SetSteeringAngle(rollPercentage * -1f);
-            vehicle.Update();
+            //vehicle.Update();
         }
 
         private static void Myo_PoseChanged(object sender, PoseEventArgs e)
@@ -118,11 +130,11 @@ namespace MyoSharp.ConsoleSample
                     case GearDirection.GEAR_DIRECTION_NEUTRAL:
                     case GearDirection.GEAR_DIRECTION_UNKNOWN:
                         vehicle.SetGear(GearDirection.GEAR_DIRECTION_FORWARD);
-                        vehicle.Update();
+                        //vehicle.Update();
                         break;
                     case GearDirection.GEAR_DIRECTION_BACKWARD:
                         vehicle.SetGear(GearDirection.GEAR_DIRECTION_NEUTRAL);
-                        vehicle.Update();
+                        //vehicle.Update();
                         break;
                 }
 
@@ -136,11 +148,11 @@ namespace MyoSharp.ConsoleSample
                     case GearDirection.GEAR_DIRECTION_NEUTRAL:
                     case GearDirection.GEAR_DIRECTION_UNKNOWN:
                         vehicle.SetGear(GearDirection.GEAR_DIRECTION_BACKWARD);
-                        vehicle.Update();
+                        //vehicle.Update();
                         break;
                     case GearDirection.GEAR_DIRECTION_FORWARD:
                         vehicle.SetGear(GearDirection.GEAR_DIRECTION_NEUTRAL);
-                        vehicle.Update();
+                        //vehicle.Update();
                         break;
                 }
 
@@ -151,14 +163,14 @@ namespace MyoSharp.ConsoleSample
             {
                 Console.WriteLine("turn left");
                 vehicle.SetTurnSignal(TurnSignal.TURN_SIGNAL_LEFT);
-                vehicle.Update();
+                //vehicle.Update();
             }
 
             if (e.Myo.Pose == Pose.Fist && e.Myo.Arm == Arm.Right)
             {
                 Console.Write("turn right");
                 vehicle.SetTurnSignal(TurnSignal.TURN_SIGNAL_LEFT);
-                vehicle.Update();
+                //vehicle.Update();
             }
         }
 

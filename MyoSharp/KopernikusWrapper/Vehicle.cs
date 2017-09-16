@@ -13,6 +13,7 @@ namespace KopernikusWrapper
 {
     public class Vehicle
     {
+        public bool isUpdating;
         public enum ConnectionState
         {
             NotConnected,
@@ -229,7 +230,12 @@ namespace KopernikusWrapper
             }
                 
             clientSocket.BeginSend(writeBuffer, 0, requestLength, SocketFlags.None, EndSend, writeBuffer);
-            BeginReceiveData();
+
+            if (command == RequestCommand.VehicleType)
+            {
+                BeginReceiveData();
+            }
+
         }
         void EndSend(System.IAsyncResult iar)
         {
@@ -242,11 +248,13 @@ namespace KopernikusWrapper
 
         void BeginReceiveData()
         {
+            Console.WriteLine("BeginReceiveData");
             receiveDataOffset = 0;
             clientSocket.BeginReceive(readHeader, 0, readHeader.Length, SocketFlags.None, EndReceiveData, null);
         }
         void EndReceiveData(System.IAsyncResult iar)
         {
+            Console.WriteLine("EndReceiveData");
             int numBytesReceived = receiveDataOffset + clientSocket.EndReceive(iar);
             if (numBytesReceived < readHeader.Length)
             {
@@ -270,11 +278,13 @@ namespace KopernikusWrapper
 
         void BeginReceiveDataBody()
         {
+            Console.WriteLine("BeginReceiveDataBody");
             receiveDataOffset = 0;
             clientSocket.BeginReceive(readBuffer, 0, readBuffer.Length, SocketFlags.None, EndReceiveDataBody, null);
         }
         void EndReceiveDataBody(System.IAsyncResult iar)
         {
+            Console.WriteLine("EndReceiveDataBody");
             int numBytesReceived = receiveDataOffset + clientSocket.EndReceive(iar);
             if (numBytesReceived < receiveDataLength)
             {
@@ -289,6 +299,7 @@ namespace KopernikusWrapper
 
         void ProcessData(int numBytesRecv)
         {
+            Console.WriteLine("ProcessData");
             if (connectState == ConnectionState.AttemptingConnect)
             {
                 connectState = ConnectionState.Connected;
@@ -300,7 +311,7 @@ namespace KopernikusWrapper
             System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
             string s = enc.GetString(readBuffer,0,numBytesRecv);
 
-            //UnityEngine.Debug.Log(s);
+            //Console.WriteLine(s);
 
             vehicleStatus = new VehicleStatus(s);
 
