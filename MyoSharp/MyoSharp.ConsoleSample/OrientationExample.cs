@@ -45,9 +45,12 @@ namespace MyoSharp.ConsoleSample
                 hub.MyoConnected += (sender, e) =>
                 {
                     Console.WriteLine("Myo {0} has connected!", e.Myo.Handle);
-                    e.Myo.Unlock(UnlockType.Hold);
                     e.Myo.Vibrate(VibrationType.Short);
-                    e.Myo.OrientationDataAcquired += Myo_OrientationDataAcquired;
+
+                    e.Myo.PoseChanged += Myo_PoseChanged;
+                    e.Myo.Locked += Myo_Locked;
+                    e.Myo.Unlocked += Myo_Unlocked;
+
                 };
 
                 // listen for when the Myo disconnects
@@ -67,28 +70,62 @@ namespace MyoSharp.ConsoleSample
         #endregion
 
         #region Event Handlers
-        private static void Myo_OrientationDataAcquired(object sender, OrientationDataEventArgs e)
+        private static void Myo_OrientationDataAcquiredRight(object sender, OrientationDataEventArgs e)
         {
             const float PI = (float)System.Math.PI;
 
-            // convert the values to a 0-9 scale (for easier digestion/understanding)
-            var roll = (int)((e.Roll + PI) / (PI * 2.0f) * 10);
-            var pitch = (int)((e.Pitch + PI) / (PI * 2.0f) * 10);
-            var yaw = (int)((e.Yaw + PI) / (PI * 2.0f) * 10);
+            var pitchDegree = e.Pitch * 180 / PI;
 
-            Console.WriteLine("rolle = " + e.Roll);
+            Console.WriteLine($"Pitch percentage={pitchDegree}");
 
-            var rollDegree = e.Roll * 180 / PI;
-            float rollPercentage = (float) (180 / 100 * rollDegree);
-
-            vehicle.SetThrottle(0.2f);
-            vehicle.SetSteeringAngle(rollPercentage);
+            if (pitchDegree > 0)
+            {
+              
+                vehicle.SetThrottle((float) (((70f / 100f) * pitchDegree)) / 100f);
+                vehicle.SetBrake(0f);
+            }
+            else if (pitchDegree < 0)
+            {
+                Console.WriteLine("lower 0");
+                vehicle.SetBrake((float) (((70f / 100f) * System.Math.Abs(pitchDegree)) / 100f));
+                vehicle.SetThrottle(0f);
+            }
             vehicle.Update();
+        }
 
-            //Console.Clear();
-            //Console.WriteLine(@"Roll: {0}", roll);
-            //Console.WriteLine(@"Pitch: {0}", pitch);
-            //Console.WriteLine(@"Yaw: {0}", yaw);
+        private static void Myo_OrientationDataAcquiredLeft(object sender, OrientationDataEventArgs e)
+        {
+            const float PI = (float)System.Math.PI;
+
+            var rollDegree = e.Roll * 180f / PI;
+            var rollPercentage = (float)((65f / 100f * rollDegree)) / 100f;
+
+            Console.WriteLine($"Roll percentage={rollDegree}");
+
+            vehicle.SetSteeringAngle(rollPercentage * -1f);
+            vehicle.Update();
+        }
+
+        private static void Myo_PoseChanged(object sender, PoseEventArgs e)
+        {
+            Console.WriteLine("{0} arm Myo detected {1} pose!", e.Myo.Arm, e.Myo.Pose);
+        }
+
+        private static void Myo_Unlocked(object sender, MyoEventArgs e)
+        {
+            if (e.Myo.Arm == Arm.Right)
+            {
+                e.Myo.OrientationDataAcquired += Myo_OrientationDataAcquiredRight;
+            }
+            if (e.Myo.Arm == Arm.Left)
+            {
+                e.Myo.OrientationDataAcquired += Myo_OrientationDataAcquiredLeft;
+            }
+        }
+
+        private static void Myo_Locked(object sender, MyoEventArgs e)
+        {
+            Console.WriteLine("{0} arm Myo has locked!", e.Myo.Arm);
         }
         #endregion
     }
