@@ -6,7 +6,7 @@ during HackZurich 2017 we tried to implement a new way to remote control a car a
 ## How it works...the functional way
 
 The car (be it as Unity simulator or toy car provided by Kopernikus) will be controller via 2 Myo armbands.
-[Insert Picture here]
+![maxresdefault](Images/maxresdefault.jpg)
 
 ### defining direction
 The left armband controls the steering wheel angle by rotating the forearm into the desired direction. Through this movement the steering axis of the car is moved and given some throttle, the car moves in that direction.
